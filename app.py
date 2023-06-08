@@ -54,5 +54,32 @@ def todo_put():
 # if __name__ == "__main__":
 #     app.run("0.0.0.0", port=5001, debug=True)
 
+#[2]
+# @app.route("/todo", methods=["POST"])
+# def todo_post():
+#     todo_receive = request.form['todo_give']
+#     todo_list = list(db.todo.find({}, {'_id': False}))
+#     count = len(todo_list) + 1
+#     doc = {
+#         'todo':todo_receive,
+#         'num' :count,
+#         'done' : 0,
+#     }
+#     db.todo.insert_one(doc)
+#     return jsonify({'msg': '저장완료!'})
+
+# @app.route("/todo", methods=["DELETE"])
+# def todo_delete():
+#     num_receive = request.form["num"]
+#     db.todo.delete_one({'num': int(num_receive)})
+#     return jsonify({'msg': "삭제 완료!"})
+
+# @app.route("/todo/done", methods=["POST"])
+# def todo_done():
+#     num_receive = request.form['done_give']
+#     db.todo.update_one({'num': int(num_receive)}, {'$set': {'done': 1}})
+#     return jsonify({'msg': '계획 완료!'})
+
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5001, debug=True)
+    

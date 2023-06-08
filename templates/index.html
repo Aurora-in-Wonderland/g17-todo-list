@@ -228,6 +228,89 @@
 
     <!-- 1 -->
 
+    <!-- 2번 JE 시작 -->
+    <!-- function show_todo() {
+      fetch('/todo')
+        .then((res) => res.json())
+        .then((data) => {
+          $('#todo-list').empty();
+          let rows = data['result'];
+          rows.forEach((a) => {
+            let todo = a['todo'];
+            let num = a['num'];
+            let done = a['done'];
+            let temp_html = ``;
+            if (done === 1) {
+            temp_html = `
+              <div class="list" id=${num}>
+                <p class="check_box">✔</p>
+                <p class="done_check">${todo}</p>
+                <button onclick="deletebtn('${num}')">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            `;
+           } else {
+            temp_html = `
+              <div class="list" id=${num}>
+                <button onclick="done_todo(${num})">
+                  <p class="check_box">✔</p>
+                </button>
+                <p>${todo}</p>
+                <button onclick="deletebtn('${num}')">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            `;
+      }
+
+      $('#todo-list').append(temp_html);
+    });
+  });
+}
+
+    function save_todo() {
+      let todo = $('#todo').val();
+
+      let formData = new FormData();
+      formData.append('todo_give', todo);
+
+      fetch('/todo', { method: 'POST', body: formData })
+        .then((response) => response.json())
+        .then((data) => {
+          alert(data['msg']);
+          window.location.reload();
+        });
+    }
+    function deletebtn(num) { // 삭제하기
+      let formData = new FormData();
+      formData.append('num', num);
+      fetch('/todo', { method: 'DELETE', body: formData })
+       .then((res) => res.json())
+       .then((data) => {
+           alert(data['msg']);
+           window.location.reload();
+       });
+  }
+
+      function done_todo(num) {
+        let formData = new FormData();
+        formData.append('done_give', num);
+        fetch('/todo/done', { method: 'POST', body: formData })
+        .then((response) => response.json())
+        .then((data) => {
+          alert(data['msg']);
+          window.location.reload();
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      } -->
+
+      <!-- CSS 한줄만 추가-->
+      <!-- .done_check {
+        text-decoration: line-through;
+      } -->
     <!-- 2 -->
 
     <!-- function todosDo() {
@@ -268,6 +351,8 @@
             });
           });
       } -->
+
+
 
     <!-- 입력창 -->
     <div class="todo_list">
