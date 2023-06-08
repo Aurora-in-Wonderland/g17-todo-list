@@ -42,5 +42,17 @@ def todo_put():
     # 삭제
     return jsonify({'msg': '수정완료!'})
 
+# # 진행중인 목록 가져오기-
+# def todo_state():
+#     todos = list(db.todo.find({},{'state':0}))
+#     return jsonify({"actives":todos})
+
+# # 완료된 목록 가져오기
+# def todo_state_Done():
+#     done = list(db.todo.find({},{'state':1}))
+#     return jsonify({"completed":done})
+# if __name__ == "__main__":
+#     app.run("0.0.0.0", port=5001, debug=True)
+
 if __name__ == "__main__":
     app.run("0.0.0.0", port=5001, debug=True)

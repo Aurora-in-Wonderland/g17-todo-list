@@ -230,7 +230,44 @@
 
     <!-- 2 -->
 
-    <!-- 3 -->
+    <!-- function todosDo() {
+        fetch('/todo')
+          .then((res) => res.json())
+          .then((data) => {
+            $('#todo-list').empty();
+            let list = data['result'];
+            list.forEach((a) => {
+              let todo = a['todo'];
+              let state = a['state'];
+              let show_todoDo = data['actives'];
+              console.log(state);
+              $('#todosDo').click(function () {
+                if (state === 0) {
+                  $('#todo-list').show();
+                } else {
+                  $('#todo-list').hide();
+                }
+              });
+            });
+          });
+      }
+
+      function todosDone() {
+        fetch('/todo')
+          .then((res) => res.json())
+          .then((data) => {
+            let doDone = data['result'];
+            doDone.forEach((a) => {
+              let todo = a['todo'];
+              let state = a['state'];
+              let show_todoDone = data['done'];
+              console.log(state);
+              $('#todosDone').click(function () {
+                state === 1 ? show_todoDone : console.log('한숨만');
+              });
+            });
+          });
+      } -->
 
     <!-- 입력창 -->
     <div class="todo_list">
@@ -250,9 +287,9 @@
 
       <!-- 분류 버튼 -->
       <!-- <div class="filter_btn">
-        <button data-type="all">All</button>
-        <button data-type="active">Active</button>
-        <button data-type="completed">Completed</button>
+        <button id = "showAll" data-type="all">All</button>
+        <button id = "todosDo" data-type="active">Active</button>
+        <button id = "todosDone" data-type="completed">Completed</button>
       </div> -->
       <div
         class="btn-group"
