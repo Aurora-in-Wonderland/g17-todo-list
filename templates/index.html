@@ -62,6 +62,12 @@
         font-weight: bold;
       }
 
+      .input_box > button:hover {
+        color: #f2d8d8;
+        box-shadow: 0 80px 0 0 rgba(0, 0, 0, 0.1) inset,
+          0 -80px 0 0 rgba(0, 0, 0, 0.1) inset;
+      }
+
       .btn-check {
         background-color: #f2d8d8;
       }
@@ -108,6 +114,10 @@
 
         /* 삭제 */
       }
+
+      .done_check {
+        text-decoration: line-through;
+      }
     </style>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -142,6 +152,7 @@
       $(document).ready(function () {
         show_todo();
       });
+
       function show_todo() {
         fetch("/todo")
           .then((res) => res.json())
@@ -150,13 +161,33 @@
             let rows = data["result"];
             rows.forEach((a) => {
               let todo = a["todo"];
-              let temp_html = ` <div class="list">
-                                      <p class="check_box">✔</p>
-                                        <p>${todo}</p>
-                                            <button>
-                                              <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                    </div>`;
+              let num = a["num"];
+              let done = a["done"];
+              let temp_html = ``;
+              if (done === 1) {
+                temp_html = `
+              <div class="list" id=${num}>
+                <p class="check_box">✔</p>
+                <p class="done_check">${todo}</p>
+                <button onclick="deletebtn('${num}')">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            `;
+              } else {
+                temp_html = `
+              <div class="list" id=${num}>
+                <button onclick="done_todo(${num})">
+                  <p class="check_box">✔</p>
+                </button>
+                <p>${todo}</p>
+                <button onclick="deletebtn('${num}')">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            `;
+              }
+
               $("#todo-list").append(temp_html);
             });
           });
@@ -165,13 +196,85 @@
       function save_todo() {
         let todo = $("#todo").val();
 
+        if (todo.length == 0) {
+          alert("내용을 입력해주세요.");
+          $("#todo").focus();
+          return false;
+        }
+
         let formData = new FormData();
         formData.append("todo_give", todo);
+
         fetch("/todo", { method: "POST", body: formData })
           .then((response) => response.json())
           .then((data) => {
             alert(data["msg"]);
             window.location.reload();
+          });
+      }
+
+      function done_todo(num) {
+        let formData = new FormData();
+        formData.append("done_give", num);
+        fetch("/todo/done", { method: "POST", body: formData })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data["msg"]);
+            window.location.reload();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+      function deletebtn(num) {
+        // 삭제하기
+        let formData = new FormData();
+        formData.append("num", num);
+        fetch("/todo", { method: "DELETE", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data["msg"]);
+            window.location.reload();
+          });
+      }
+
+      function todosDo() {
+        fetch("/todo")
+          .then((res) => res.json())
+          .then((data) => {
+            $("#todo-list").empty();
+            let list = data["result"];
+            list.forEach((a) => {
+              let todo = a["todo"];
+              let state = a["state"];
+              let show_todoDo = data["actives"];
+              console.log(state);
+              $("#todosDo").click(function () {
+                if (state === 0) {
+                  $("#todo-list").show();
+                } else {
+                  $("#todo-list").hide();
+                }
+              });
+            });
+          });
+      }
+
+      function todosDone() {
+        fetch("/todo")
+          .then((res) => res.json())
+          .then((data) => {
+            let doDone = data["result"];
+            doDone.forEach((a) => {
+              let todo = a["todo"];
+              let state = a["state"];
+              let show_todoDone = data["done"];
+              console.log(state);
+              $("#todosDone").click(function () {
+                state === 1 ? show_todoDone : console.log("한숨만");
+              });
+            });
           });
       }
 
@@ -226,205 +329,6 @@
   <body>
     <h1>Todo List</h1>
 
-    <!-- 1 -->
-
-    <!-- 2번 JE 시작 -->
-    <!-- function show_todo() {
-      fetch('/todo')
-        .then((res) => res.json())
-        .then((data) => {
-          $('#todo-list').empty();
-          let rows = data['result'];
-          rows.forEach((a) => {
-            let todo = a['todo'];
-            let num = a['num'];
-            let done = a['done'];
-            let temp_html = ``;
-            if (done === 1) {
-            temp_html = `
-              <div class="list" id=${num}>
-                <p class="check_box">✔</p>
-                <p class="done_check">${todo}</p>
-                <button onclick="deletebtn('${num}')">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            `;
-           } else {
-            temp_html = `
-              <div class="list" id=${num}>
-                <button onclick="done_todo(${num})">
-                  <p class="check_box">✔</p>
-                </button>
-                <p>${todo}</p>
-                <button onclick="deletebtn('${num}')">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            `;
-      }
-
-      $('#todo-list').append(temp_html);
-    });
-  });
-}
-
-    function save_todo() {
-      let todo = $('#todo').val();
-
-      let formData = new FormData();
-      formData.append('todo_give', todo);
-
-      fetch('/todo', { method: 'POST', body: formData })
-        .then((response) => response.json())
-        .then((data) => {
-          alert(data['msg']);
-          window.location.reload();
-        });
-    }
-    function deletebtn(num) { // 삭제하기
-      let formData = new FormData();
-      formData.append('num', num);
-      fetch('/todo', { method: 'DELETE', body: formData })
-       .then((res) => res.json())
-       .then((data) => {
-           alert(data['msg']);
-           window.location.reload();
-       });
-  }
-
-      function done_todo(num) {
-        let formData = new FormData();
-        formData.append('done_give', num);
-        fetch('/todo/done', { method: 'POST', body: formData })
-        .then((response) => response.json())
-        .then((data) => {
-          alert(data['msg']);
-          window.location.reload();
-        })
-        .catch(err => {
-          console.log(err)
-        });
-      } -->
-
-      <!-- CSS 한줄만 추가-->
-      <!-- .done_check {
-        text-decoration: line-through;
-      } -->
-    <!-- 2 -->
-    <!--  $(document).ready(function () {
-      show_todo();
-    });
-
-    function show_todo() {
-      fetch('/todo')
-        .then((res) => res.json())
-        .then((data) => {
-          $('#todo-list').empty();
-          let rows = data['result'];
-          rows.forEach((a) => {
-            let todo = a['todo'];
-            let temp_html = `<div class="list">
-                                <p class="check_box">✔</p>
-                                  <p>${todo}</p>
-                                      <button>
-                                        <i class="fas fa-trash-alt"></i>
-                                      </button>
-                              </div>`          
-            $('#todo-list').append(temp_html);
-          })
-          });
-    };
-    
-    function save_todo() {
-      let todo = $('#todo').val();
-
-      if (todo.length ==0){
-        alert("내용을 입력해주세요.");
-        $('#todo').focus();
-        return false;}
-
-      let formData = new FormData();
-      formData.append('todo_give', todo);
-
-      fetch('/todo', { method: 'POST', body: formData })
-        .then((response) => response.json())
-        .then((data) => {
-            alert(data['msg']);
-          window.location.reload();
-        });
-    }
-  </script>
-</head>
-<body>
-  <h1>Todo List</h1>
-  < 입력창 -->
-  <!--  <div class="todo_list">
-    <div class="input_box">
-      <input
-        type="text"
-        id="todo"
-        class="todo-input"
-        maxlength="15"
-        placeholder="해야 할 일을 입력해주세요."
-      />
-      <button onclick="save_todo()" type="button" class="complete-all-btn">
-        입력
-      </button>
-    </div>
-
-    <css 수정>
-    .input_box > button:hover {
-        color:#f2d8d8;
-        box-shadow: 0 80px 0 0  rgba(0,0,0,0.10) inset, 
-                    0 -80px 0 0 rgba(0,0,0,0.10) inset;
-     }
-
-
-
-    <!- 2 -->
-
-    <!-- function todosDo() {
-        fetch('/todo')
-          .then((res) => res.json())
-          .then((data) => {
-            $('#todo-list').empty();
-            let list = data['result'];
-            list.forEach((a) => {
-              let todo = a['todo'];
-              let state = a['state'];
-              let show_todoDo = data['actives'];
-              console.log(state);
-              $('#todosDo').click(function () {
-                if (state === 0) {
-                  $('#todo-list').show();
-                } else {
-                  $('#todo-list').hide();
-                }
-              });
-            });
-          });
-      }
-
-      function todosDone() {
-        fetch('/todo')
-          .then((res) => res.json())
-          .then((data) => {
-            let doDone = data['result'];
-            doDone.forEach((a) => {
-              let todo = a['todo'];
-              let state = a['state'];
-              let show_todoDone = data['done'];
-              console.log(state);
-              $('#todosDone').click(function () {
-                state === 1 ? show_todoDone : console.log('한숨만');
-              });
-            });
-          });
-      } -->
-
-
-
     <!-- 입력창 -->
     <div class="todo_list">
       <div class="input_box">
@@ -442,50 +346,17 @@
       <button onclick="change_todo()">CHANGE</button>
 
       <!-- 분류 버튼 -->
-      <!-- <div class="filter_btn">
-        <button id = "showAll" data-type="all">All</button>
-        <button id = "todosDo" data-type="active">Active</button>
-        <button id = "todosDone" data-type="completed">Completed</button>
-      </div> -->
-      <div
-        class="btn-group"
-        role="group"
-        aria-label="Basic radio toggle button group"
-      >
-        <input
-          type="radio"
-          class="btn-check"
-          name="btnradio"
-          id="btnradio1"
-          autocomplete="off"
-          checked
-        />
-        <label class="btn btn-outline-primary" for="btnradio1">Radio 1</label>
-
-        <input
-          type="radio"
-          class="btn-check"
-          name="btnradio"
-          id="btnradio2"
-          autocomplete="off"
-        />
-        <label class="btn btn-outline-primary" for="btnradio2">Radio 2</label>
-
-        <input
-          type="radio"
-          class="btn-check"
-          name="btnradio"
-          id="btnradio3"
-          autocomplete="off"
-        />
-        <label class="btn btn-outline-primary" for="btnradio3">Radio 3</label>
+      <div class="filter_btn">
+        <button id="showAll" data-type="all">All</button>
+        <button id="todosDo" data-type="active">Active</button>
+        <button id="todosDone" data-type="completed">Completed</button>
       </div>
 
       <ul class="lists" id="todo-list">
         <li class="list" onclick="change_todo()">
           <p class="check_box">✔</p>
           <p>첫번째 할 일</p>
-          <button>
+          <button onclick="deletebtn()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </li>
