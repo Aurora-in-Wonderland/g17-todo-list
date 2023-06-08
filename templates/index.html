@@ -312,6 +312,77 @@
         text-decoration: line-through;
       } -->
     <!-- 2 -->
+    <!--  $(document).ready(function () {
+      show_todo();
+    });
+
+    function show_todo() {
+      fetch('/todo')
+        .then((res) => res.json())
+        .then((data) => {
+          $('#todo-list').empty();
+          let rows = data['result'];
+          rows.forEach((a) => {
+            let todo = a['todo'];
+            let temp_html = `<div class="list">
+                                <p class="check_box">✔</p>
+                                  <p>${todo}</p>
+                                      <button>
+                                        <i class="fas fa-trash-alt"></i>
+                                      </button>
+                              </div>`          
+            $('#todo-list').append(temp_html);
+          })
+          });
+    };
+    
+    function save_todo() {
+      let todo = $('#todo').val();
+
+      if (todo.length ==0){
+        alert("내용을 입력해주세요.");
+        $('#todo').focus();
+        return false;}
+
+      let formData = new FormData();
+      formData.append('todo_give', todo);
+
+      fetch('/todo', { method: 'POST', body: formData })
+        .then((response) => response.json())
+        .then((data) => {
+            alert(data['msg']);
+          window.location.reload();
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>Todo List</h1>
+  < 입력창 -->
+  <!--  <div class="todo_list">
+    <div class="input_box">
+      <input
+        type="text"
+        id="todo"
+        class="todo-input"
+        maxlength="15"
+        placeholder="해야 할 일을 입력해주세요."
+      />
+      <button onclick="save_todo()" type="button" class="complete-all-btn">
+        입력
+      </button>
+    </div>
+
+    <css 수정>
+    .input_box > button:hover {
+        color:#f2d8d8;
+        box-shadow: 0 80px 0 0  rgba(0,0,0,0.10) inset, 
+                    0 -80px 0 0 rgba(0,0,0,0.10) inset;
+     }
+
+
+
+    <!- 2 -->
 
     <!-- function todosDo() {
         fetch('/todo')
