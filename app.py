@@ -77,15 +77,8 @@ def todos_completed():
 @app.route("/todo", methods=["PUT"])
 def todo_put():
     todo_receive = request.form['todo_give']
-    change_receive = request.form['change_give']
-
-    doc = {
-        'todo':todo_receive,
-        'change':change_receive
-    }
-    db.users.insert_one(doc)
-    db.users.update_one({'todo':todo_receive},{'$set':{'change':change_receive}})
-    
+    num_receive = request.form['num_give']
+    db.todo.update_one({'num':int(num_receive)},{'$set':{'todo':todo_receive}})
     return jsonify({'msg': '수정완료!'})
 
 @app.route("/todo", methods=["DELETE"])
