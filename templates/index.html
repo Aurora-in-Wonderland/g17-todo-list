@@ -111,8 +111,6 @@
         border: none;
         cursor: pointer;
         font-weight: bold;
-
-        /* 삭제 */
       }
 
       .done_check {
@@ -278,49 +276,41 @@
           });
       }
 
-      // todo수정
-      // 1. todo리스트를 두 번 누르면 event실행
-      // 2. event 실행하여 수정 가능(PUT)
+      document.addEventListener("click", function (event) {
+        if (event.target.matches(".list p")) {
+          change_todo();
+        }
+      });
 
-      // todoListElem.innerHTML = ""; //todoListElem 요소 안의 HTML 초기화
-      // function change_todo() {
-      //   console.log("하나둘");
-      // }
+      function change_todo() {
+        let todo = $("#change_todo").val();
+        let num = $("#change_todo").val();
 
-      // const a = document.querySelector("a");
-      // a.addEventListener("click", change_todo);
-
-      // const ptag = document.querySelectorAll("");
-      // ptag.forEach(function (div) {
-      //   div.addEventListener("click", logEvent, {
-      //     capture: true, // default 값은 false입니다.
-      //   });
-      // });
-      function change_todo(event) {
-        console.log("123");
-        let todo = $("#todo").val();
-        let change = $("#change").val();
+        console.log(num);
+        console.log(todo);
 
         let formData = new FormData();
         formData.append("todo_give", todo);
-        formData.append("change_give", todo);
+        formData.append("num_give", num);
 
         fetch("/todo", { method: "PUT", body: formData })
           .then((response) => response.json())
           .then((data) => {
             // 수정된 데이터 같이 보내줌.
-            $(".list").empty();
 
-            let change_html = `<li class="list">
-                                  <p class="check_box">✔</p>
-                                  <p>${change}</p>
-                                  <button>
+            let change_html = `<li id="change_todo" class="list" onclick="change_todo()">
+                                <div class="check_box">✔</div>
+                                <p>${todo}</p>
+                                <button onclick="deletebtn()">
                                     <i class="fas fa-trash-alt"></i>
-                                  </button>
-                                </li>`;
-            $(".list").append(change_html);
-            alert(data["msg"]);
-            window.location.reload();
+                                </button>
+                               </li>`;
+            $(".list p")
+              .eq(num - 1)
+              .replaceWith(change_html);
+
+            // alert(data["msg"]);
+            // window.location.reload();
           });
         // });
       }
@@ -328,6 +318,30 @@
   </head>
   <body>
     <h1>Todo List</h1>
+    <ul class="lists" id="todo-list">
+      <li id="change_todo" class="list" onclick="change_todo()">
+        <div class="check_box">✔</div>
+        <p>첫번째 할 일</p>
+        <button onclick="deletebtn()">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+      <!-- 이벤트 버블링 이벤트 캡처링 => li에 줘야함-->
+      <li id="change_todo" class="list">
+        <div class="check_box">✔</div>
+        <p>두번째 할 일</p>
+        <button onclick="deletebtn()">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+      <li id="change_todo" class="list">
+        <div class="check_box">✔</div>
+        <p>세번째 할 일</p>
+        <button onclick="deletebtn()">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+    </ul>
 
     <!-- 입력창 -->
     <div class="todo_list">
@@ -353,33 +367,24 @@
       </div>
 
       <ul class="lists" id="todo-list">
-        <li class="list" onclick="change_todo()">
-          <p class="check_box">✔</p>
+        <li id="change_todo" class="list" onclick="change_todo()">
+          <div class="check_box">✔</div>
           <p>첫번째 할 일</p>
           <button onclick="deletebtn()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </li>
-        <!-- 이벤트 버블링 이벤트 캡처링 => li에 줘야함-->
-
-        <li class="list">
-          <p class="check_box">✔</p>
+        <li id="change_todo" class="list">
+          <div class="check_box">✔</div>
           <p>두번째 할 일</p>
-          <button>
+          <button onclick="deletebtn()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </li>
-        <li class="list">
-          <p class="check_box">✔</p>
+        <li id="change_todo" class="list">
+          <div class="check_box">✔</div>
           <p>세번째 할 일</p>
-          <button>
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </li>
-        <li class="list">
-          <p class="check_box">✔</p>
-          <p>네번째 할 일</p>
-          <button>
+          <button onclick="deletebtn()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </li>
