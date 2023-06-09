@@ -211,7 +211,7 @@
 
       function save_todo() {
         let todo = $('#todo').val();
-
+        
         if (todo.length == 0) {
           alert('내용을 입력해주세요.');
           $('#todo').focus();
@@ -310,59 +310,6 @@
         });
       });
 
-      // $(document).ready(function() {
-      // $('#todosDo').click(function() {
-      //   fetch("/todo")
-      //     .then((res) => res.json())
-      //     .then((data) => {
-      //       $("#todo-list").each(function(){
-      //         let actives = data['actives'];
-      //         console.log(actives);
-      //           if (actives === 0) {
-      //             $(this).show();
-      //           } else {
-      //             $(this).hide();
-      //           }
-      //         });
-      //       });
-      //     });
-      //   });
-
-      // function todosDone() {
-      //   fetch('/todo')
-      //     .then((res) => res.json())
-      //     .then((data) => {
-      //       let doDone = data['result'];
-      //       doDone.forEach((a) => {
-      //         let todo = a['todo'];
-      //         let state = a['state'];
-      //         let show_todoDone = data['done'];
-      //         console.log(state);
-      //         $('#todosDone').click(function () {
-      //           state === 1 ? show_todoDone : console.log('한숨만');
-      //         });
-      //       });
-      //     });
-      // }
-
-      // todo수정
-      // 1. todo리스트를 두 번 누르면 event실행
-      // 2. event 실행하여 수정 가능(PUT)
-
-      // todoListElem.innerHTML = ""; //todoListElem 요소 안의 HTML 초기화
-      // function change_todo() {
-      //   console.log("하나둘");
-      // }
-
-      // const a = document.querySelector("a");
-      // a.addEventListener("click", change_todo);
-
-      // const ptag = document.querySelectorAll("");
-      // ptag.forEach(function (div) {
-      //   div.addEventListener("click", logEvent, {
-      //     capture: true, // default 값은 false입니다.
-      //   });
-      // });
       function change_todo(event) {
         console.log('123');
         let todo = $('#todo').val();
@@ -377,10 +324,9 @@
           .then((data) => {
             // 수정된 데이터 같이 보내줌.
             $('.list').empty();
-
             let change_html = `<li class="list">
                                   <p class="check_box">✔</p>
-                                  <p>${change}</p>
+                                  <p >${change}</p>
                                   <button>
                                     <i class="fas fa-trash-alt"></i>
                                   </button>

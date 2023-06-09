@@ -49,31 +49,6 @@ def todos_completed():
     done = list(db.todo.find({'done': 1}, {'_id': False}))
     return jsonify({"completed": done})
 
-# @app.route("/todos/active", methods=["GET"])
-# def todos_active():
-#     todos = list(db.todo.find({'done': 0}))
-#     return jsonify({"actives": todos})
-
-# @app.route("/todos/completed", methods=["GET"])
-# def todos_completed():
-#     done = list(db.todo.find({'done': 1}))
-#     return jsonify({"completed": done})
-# @app.route("/todo", methods=["GET"])
-# def todo_get():
-#     all_todos = list(db.todo.find({},{'_id':False}))
-
-#     return jsonify({'result': all_todos })
-
-# # # 진행중인 목록 가져오기-
-# def todo_state():
-#     todos = list(db.todo.find({'done':0}))
-#     return jsonify({"actives":todos})
-
-# # # 완료된 목록 가져오기
-# def todo_state_Done():
-#     done = list(db.todo.find({'done':1}))
-#     return jsonify({"completed":done})
-
 @app.route("/todo", methods=["PUT"])
 def todo_put():
     todo_receive = request.form['todo_give']
@@ -83,8 +58,8 @@ def todo_put():
         'todo':todo_receive,
         'change':change_receive
     }
-    db.users.insert_one(doc)
-    db.users.update_one({'todo':todo_receive},{'$set':{'change':change_receive}})
+
+    db.todo.update_one({'todo':todo_receive},{'$set':{'change':change_receive}})
     
     return jsonify({'msg': '수정완료!'})
 
