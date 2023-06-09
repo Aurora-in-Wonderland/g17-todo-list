@@ -1,12 +1,21 @@
 from flask import Flask, render_template, request,jsonify
 app = Flask(__name__)
 
+import json
+from bson import ObjectId
 
 from pymongo import MongoClient
 import certifi
 ca = certifi.where()
 client = MongoClient('mongodb+srv://sparta:test@cluster0.cbeupio.mongodb.net/?retryWrites=true&w=majority', tlsCAFile = ca)
 db = client.dbsparta
+class JsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super(JsonEncoder, self).default(obj)
+
+app.json_encoder = JsonEncoder
 
 @app.route('/')
 def home():
@@ -27,19 +36,43 @@ def todo_post():
     
 @app.route("/todo", methods=["GET"])
 def todo_get():
-    all_todos = list(db.todo.find({},{'_id':False}))
+    all_todos = list(db.todo.find({}, {'_id': False}))
+    return jsonify({'result': all_todos})
+    
+@app.route("/todo/active", methods=["GET"])
+def todos_active():
+    todos = list(db.todo.find({'done': 0}, {'_id': False}))
+    return jsonify({"actives": todos})
 
-    return jsonify({'result': all_todos })
+@app.route("/todo/completed", methods=["GET"])
+def todos_completed():
+    done = list(db.todo.find({'done': 1}, {'_id': False}))
+    return jsonify({"completed": done})
 
-# # 진행중인 목록 가져오기-
-def todo_state():
-    todos = list(db.todo.find({},{'state':0}))
-    return jsonify({"actives":todos})
+# @app.route("/todos/active", methods=["GET"])
+# def todos_active():
+#     todos = list(db.todo.find({'done': 0}))
+#     return jsonify({"actives": todos})
 
-# # 완료된 목록 가져오기
-def todo_state_Done():
-    done = list(db.todo.find({},{'state':1}))
-    return jsonify({"completed":done})
+# @app.route("/todos/completed", methods=["GET"])
+# def todos_completed():
+#     done = list(db.todo.find({'done': 1}))
+#     return jsonify({"completed": done})
+# @app.route("/todo", methods=["GET"])
+# def todo_get():
+#     all_todos = list(db.todo.find({},{'_id':False}))
+
+#     return jsonify({'result': all_todos })
+
+# # # 진행중인 목록 가져오기-
+# def todo_state():
+#     todos = list(db.todo.find({'done':0}))
+#     return jsonify({"actives":todos})
+
+# # # 완료된 목록 가져오기
+# def todo_state_Done():
+#     done = list(db.todo.find({'done':1}))
+#     return jsonify({"completed":done})
 
 @app.route("/todo", methods=["PUT"])
 def todo_put():

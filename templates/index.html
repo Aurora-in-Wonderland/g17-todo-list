@@ -7,11 +7,12 @@
 
     <title>TODO LIST</title>
     <style>
+      * {padding:0; margin:0; box-sizing: border-box;}
       html {
         width: 100vw;
         height: 100vh;
-
-        max-width: 450px;
+        min-width: 320px;
+        max-width: 480px;
 
         background-position: center;
         background-size: cover;
@@ -23,7 +24,7 @@
         border: 2px solid #f2d8d8;
         background-color: #fffbf5;
         min-height: 100%;
-        font-family: "Noto Sans KR", sans-serif;
+        font-family: 'Noto Sans KR', sans-serif;
         font-size: 12px;
         text-align: center;
       }
@@ -72,11 +73,30 @@
         background-color: #f2d8d8;
       }
 
-      .btn-group {
-        margin: 30px;
+      .filter_btn {height: 35px;
+        margin: 20px 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-self: center;
+      }
+
+      .filter_btn>button {
+        width: 100px;
+        background-color: #f2d8d8;
+        border: none;
+        border-radius: 5px;
+        margin: 2px;
+      }
+
+      .filter_btn>button:hover{
+        background-color: #f4b0b0;
       }
 
       .lists {
+        padding: 0;
+        margin: 0;
+        line-height: 35px;
         /* 테두리 겹침을 없애는 법? */
       }
       .list {
@@ -94,10 +114,6 @@
         position: relative;
 
         padding: 0;
-      }
-
-      .check_box {
-        margin-left: 10px;
       }
 
       .list > button {
@@ -154,20 +170,20 @@
       });
 
       function show_todo() {
-        fetch("/todo")
+        fetch('/todo')
           .then((res) => res.json())
           .then((data) => {
-            $("#todo-list").empty();
-            let rows = data["result"];
+            $('#todo-list').empty();
+            let rows = data['result'];
             rows.forEach((a) => {
-              let todo = a["todo"];
-              let num = a["num"];
-              let done = a["done"];
+              let todo = a['todo'];
+              let num = a['num'];
+              let done = a['done'];
               let temp_html = ``;
               if (done === 1) {
                 temp_html = `
               <div class="list" id=${num}>
-                <p class="check_box">✔</p>
+                <button class="check_box">✔</button>
                 <p class="done_check">${todo}</p>
                 <button onclick="deletebtn('${num}')">
                   <i class="fas fa-trash-alt"></i>
@@ -185,41 +201,41 @@
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
-            `;
-              }
+            `
+              };
 
-              $("#todo-list").append(temp_html);
+              $('#todo-list').append(temp_html);
             });
           });
       }
 
       function save_todo() {
-        let todo = $("#todo").val();
+        let todo = $('#todo').val();
 
         if (todo.length == 0) {
-          alert("내용을 입력해주세요.");
-          $("#todo").focus();
+          alert('내용을 입력해주세요.');
+          $('#todo').focus();
           return false;
         }
 
         let formData = new FormData();
-        formData.append("todo_give", todo);
+        formData.append('todo_give', todo);
 
-        fetch("/todo", { method: "POST", body: formData })
+        fetch('/todo', { method: 'POST', body: formData })
           .then((response) => response.json())
           .then((data) => {
-            alert(data["msg"]);
+            alert(data['msg']);
             window.location.reload();
           });
       }
 
       function done_todo(num) {
         let formData = new FormData();
-        formData.append("done_give", num);
-        fetch("/todo/done", { method: "POST", body: formData })
+        formData.append('done_give', num);
+        fetch('/todo/done', { method: 'POST', body: formData })
           .then((response) => response.json())
           .then((data) => {
-            alert(data["msg"]);
+            alert(data['msg']);
             window.location.reload();
           })
           .catch((err) => {
@@ -230,53 +246,104 @@
       function deletebtn(num) {
         // 삭제하기
         let formData = new FormData();
-        formData.append("num", num);
-        fetch("/todo", { method: "DELETE", body: formData })
+        formData.append('num', num);
+        fetch('/todo', { method: 'DELETE', body: formData })
           .then((res) => res.json())
           .then((data) => {
-            alert(data["msg"]);
+            alert(data['msg']);
             window.location.reload();
           });
       }
-
-      function todosDo() {
-        fetch("/todo")
-          .then((res) => res.json())
-          .then((data) => {
-            $("#todo-list").empty();
-            let list = data["result"];
-            list.forEach((a) => {
-              let todo = a["todo"];
-              let state = a["state"];
-              let show_todoDo = data["actives"];
-              console.log(state);
-              $("#todosDo").click(function () {
-                if (state === 0) {
-                  $("#todo-list").show();
-                } else {
-                  $("#todo-list").hide();
-                }
-              });
+      
+      //All 버튼 누르면 전체 목록 보여주기
+      $(document).ready(function () {
+        $('#showAll').click(function () {
+              window.location.reload();
             });
-          });
-      }
-
-      function todosDone() {
-        fetch("/todo")
-          .then((res) => res.json())
-          .then((data) => {
-            let doDone = data["result"];
-            doDone.forEach((a) => {
-              let todo = a["todo"];
-              let state = a["state"];
-              let show_todoDone = data["done"];
-              console.log(state);
-              $("#todosDone").click(function () {
-                state === 1 ? show_todoDone : console.log("한숨만");
+        });
+        
+        //Actives 버튼 누르면 현재 진행중인 목록 보여주기
+        $(document).ready(function () {
+          $('#todosDo').click(function () {
+            fetch('/todo/active')
+              .then((res) => res.json())
+              .then((data) => {
+                const actives = data['actives'];
+                let html = '';
+                actives.forEach((todo) => {
+                  let todoA = todo['todo'];
+                  let doneA = todo['done'];
+                  html += `<li class="list">
+                                  <button class="check_box">✔</button>
+                                  <p>${todoA}</p>
+                                  <button>
+                                    <i class="fas fa-trash-alt"></i>
+                                  </button>
+                                </li>`;
+                });
+                $('#todo-list').html(html);
               });
-            });
           });
-      }
+        });
+
+      //Completed 버튼 누르면 완료된 목록 보여주기
+      $(document).ready(function () {
+        $('#todosDone').click(function () {
+          fetch('/todo/completed')
+            .then((res) => res.json())
+            .then((data) => {
+              const actives = data['completed'];
+              let html = '';
+              actives.forEach((todo) => {
+                let todoD = todo['todo'];
+                let doneD = todo['done'];
+                html += `<li class="list">
+                                  <button class="check_box">✔</button>
+                                  <p class="done_check">${todoD}</p>
+                                  <button>
+                                    <i class="fas fa-trash-alt"></i>
+                                  </button>
+                                </li>`;
+              });
+              $('#todo-list').html(html);
+            });
+        });
+      });
+
+      // $(document).ready(function() {
+      // $('#todosDo').click(function() {
+      //   fetch("/todo")
+      //     .then((res) => res.json())
+      //     .then((data) => {
+      //       $("#todo-list").each(function(){
+      //         let actives = data['actives'];
+      //         console.log(actives);
+      //           if (actives === 0) {
+      //             $(this).show();
+      //           } else {
+      //             $(this).hide();
+      //           }
+      //         });
+      //       });
+      //     });
+      //   });
+
+      // function todosDone() {
+      //   fetch('/todo')
+      //     .then((res) => res.json())
+      //     .then((data) => {
+      //       let doDone = data['result'];
+      //       doDone.forEach((a) => {
+      //         let todo = a['todo'];
+      //         let state = a['state'];
+      //         let show_todoDone = data['done'];
+      //         console.log(state);
+      //         $('#todosDone').click(function () {
+      //           state === 1 ? show_todoDone : console.log('한숨만');
+      //         });
+      //       });
+      //     });
+      // }
 
       // todo수정
       // 1. todo리스트를 두 번 누르면 event실행
@@ -297,19 +364,19 @@
       //   });
       // });
       function change_todo(event) {
-        console.log("123");
-        let todo = $("#todo").val();
-        let change = $("#change").val();
+        console.log('123');
+        let todo = $('#todo').val();
+        let change = $('#change').val();
 
         let formData = new FormData();
-        formData.append("todo_give", todo);
-        formData.append("change_give", todo);
+        formData.append('todo_give', todo);
+        formData.append('change_give', todo);
 
-        fetch("/todo", { method: "PUT", body: formData })
+        fetch('/todo', { method: 'PUT', body: formData })
           .then((response) => response.json())
           .then((data) => {
             // 수정된 데이터 같이 보내줌.
-            $(".list").empty();
+            $('.list').empty();
 
             let change_html = `<li class="list">
                                   <p class="check_box">✔</p>
@@ -318,8 +385,8 @@
                                     <i class="fas fa-trash-alt"></i>
                                   </button>
                                 </li>`;
-            $(".list").append(change_html);
-            alert(data["msg"]);
+            $('.list').append(change_html);
+            alert(data['msg']);
             window.location.reload();
           });
         // });
@@ -354,12 +421,15 @@
 
       <ul class="lists" id="todo-list">
         <li class="list" onclick="change_todo()">
-          <p class="check_box">✔</p>
-          <p>첫번째 할 일</p>
-          <button onclick="deletebtn()">
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </li>
+          <ul>
+            <li class="check_box">✔</li>
+            <li>첫번째 할 일</li>
+            <li><button onclick="deletebtn()">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            </li>
+          </ul>
+          </li>
         <!-- 이벤트 버블링 이벤트 캡처링 => li에 줘야함-->
 
         <li class="list">
