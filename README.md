@@ -7,6 +7,8 @@
 사전 캠프 기간에 배운 CRUD를 활용한 Todo List.
 이노베이션 캠프를 진행하면서 팀별로 해야할 일들과 완료한 일들을 쉽게 관리할 수 있다.
 
+<img src="https://github.com/Aurora-in-Wonderland/g17-todo-list/assets/99107568/69d3e5b2-80c3-4f87-8a70-ee93c393b899"/>
+
 ## 🌟김은비
 
 - 멋진 팀장님
